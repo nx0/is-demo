@@ -44,20 +44,29 @@ function install_kubectl {
 echo ""
 echo "======== Detecting dependencies ========"
 echo ""
-echo -n "* checking docker installation ..."
+
+echo -n "> checking supported OS ..."
+if lsb_release -d | grep -i ubuntu >/dev/null; then 
+    echo "ok"
+else
+    echo "os not supported"
+    exit_grace
+fi
+
+echo -n "> checking docker installation ..."
 if docker -v >/dev/null; then
     echo "ok"
 else
     exit_grace
 fi
-echo -n "* checking if docker is running..."
+echo -n "> checking if docker is running..."
 if [ "$(systemctl status docker | grep "Active:" | awk '{ print $3 }')" == "(running)" ]; then
     echo "ok"
 else
     exit_grace
 fi
 
-echo -n "* checking if minikube is installed..."
+echo -n "> checking if minikube is installed..."
 if dpkg -l | grep minikube >/dev/null; then
     echo "ok"
 else
@@ -65,7 +74,7 @@ else
     install_minikube
 fi
 
-echo -n "* checking kubectl..."
+echo -n "> checking if kubectl is installed ..."
 if kubectl version --client 2>/dev/null; then
     echo "ok"
 else
@@ -73,7 +82,7 @@ else
     install_kubectl
 fi
 
-echo "* Detecting docker image of instant-search..."
+echo "> Detecting docker image of instant-search..."
 if ! docker image ls | grep instant-search >/dev/null; then
     echo "WARNING: instant-search image not found..."
     echo "===> building instant-search image locally..."
@@ -91,6 +100,7 @@ else
     fi
 fi
 
+echo "> checking endpoint availability ..."
 http_endpoint="$(curl -sIXGET http://localhost:8080 | head -n 1 | awk '{ print $2 }')"
 if  [ "$http_endpoint" == "200" ]; then
     endpoint_ready
