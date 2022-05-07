@@ -45,6 +45,15 @@ echo ""
 echo "======== Detecting dependencies ========"
 echo ""
 
+echo -n "> checking directory..."
+if [ "$(basename `pwd`)" != "is-demo" ]; then
+    echo "error"
+    echo "incorrect directory, execute the script inside the is-demo folder"
+    exit_grace
+else
+    echo "ok"
+fi
+
 echo -n "> checking supported OS ..."
 if lsb_release -d | grep -i ubuntu >/dev/null; then 
     echo "ok"
@@ -75,7 +84,7 @@ else
 fi
 
 echo -n "> checking if kubectl is installed ..."
-if kubectl version --client 2>/dev/null; then
+if kubectl version --client >/dev/null 2>&1; then
     echo "ok"
 else
     echo "WARNING: kubectl not found"
