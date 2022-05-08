@@ -6,6 +6,7 @@ unset DOCKER_TLS_VERIFY
 unset MINIKUBE_ACTIVE_DOCKERD
 unset DOCKER_HOST
 
+# show when endpoint is ready
 function endpoint_ready {
     echo ""
     echo ""
@@ -17,6 +18,7 @@ function endpoint_ready {
     echo ""
 }
 
+# upload docker image
 function upload_image {
     echo "===> uploading image to minikube"
     echo ""
@@ -25,17 +27,20 @@ function upload_image {
     minikube image load instant-search:latest
 }
 
+# exiting the script gracefully
 function exit_grace {
     echo "missing requirements, exiting..."
     exit 1
 }
 
+# installing minikube via package manager
 function install_minikube {
     echo "===> installing minikube"
     curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
     sudo dpkg -i minikube_latest_amd64.deb
 }
 
+# install the kubectl command
 function install_kubectl {
     echo "===> installing kubectl via snap"
     sudo snap install kubectl --classic
@@ -45,6 +50,7 @@ echo ""
 echo "======== Detecting dependencies ========"
 echo ""
 
+# perform all the required checks
 echo -n "> checking directory..."
 if [ "$(basename `pwd`)" != "is-demo" ]; then
     echo "error"
@@ -91,6 +97,7 @@ else
     install_kubectl
 fi
 
+# detecting and uploading (if necesary) the docker image
 echo "> Detecting docker image of instant-search..."
 if ! docker image ls | grep instant-search >/dev/null; then
     echo "WARNING: instant-search image not found..."
@@ -109,6 +116,7 @@ else
     fi
 fi
 
+# checking if the app endpoint is available
 echo "> checking endpoint availability ..."
 http_endpoint="$(curl -sIXGET http://localhost:8080 | head -n 1 | awk '{ print $2 }')"
 if  [ "$http_endpoint" == "200" ]; then
