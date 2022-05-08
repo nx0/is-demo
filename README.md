@@ -81,9 +81,7 @@ The exit status of the script will be similar to this:
 
 :information_source: This is only for testing the app individually, the `install.sh` script will take care of installing everything.
 
-
-### Build docker image locally
-
+### Build docker image locally
 ```bash
 cd packaging
 docker build -t instant-search .
@@ -91,8 +89,7 @@ docker build -t instant-search .
 docker run -p 3001:3001 -p 3000:3000 instant-search
 ```
 
-
-### Using a cluster
+### Using a cluster
 ```bash
 # Ensure using the minkube context in case we are using other kubernetes contexts locally.
 kubectl config use-context minikube (optional)
